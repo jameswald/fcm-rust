@@ -62,6 +62,7 @@ fn should_be_able_to_render_a_full_message_to_json() {
         .collapse_key("foo")
         .priority(Priority::High)
         .content_available(false)
+        .mutable_content(false)
         .delay_while_idle(true)
         .time_to_live(420)
         .restricted_package_name("pkg")
@@ -76,6 +77,7 @@ fn should_be_able_to_render_a_full_message_to_json() {
         "collapse_key": "foo",
         "priority": "high",
         "content_available": false,
+        "mutable_content": false,
         "delay_while_idle": true,
         "time_to_live": 420,
         "restricted_package_name": "pkg",
@@ -137,6 +139,19 @@ fn should_set_content_available() {
     let msg = builder.finalize();
 
     assert_eq!(msg.body.content_available, Some(true));
+}
+
+#[test]
+fn should_set_mutable_content() {
+    let msg = MessageBuilder::new("api_key", "token").finalize();
+
+    assert_eq!(msg.body.mutable_content, None);
+
+    let mut builder = MessageBuilder::new("api_key", "token");
+    builder.mutable_content(true);
+    let msg = builder.finalize();
+
+    assert_eq!(msg.body.mutable_content, Some(true));
 }
 
 #[test]

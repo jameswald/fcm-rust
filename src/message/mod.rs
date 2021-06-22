@@ -33,6 +33,9 @@ pub struct MessageBody<'a> {
     dry_run: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
+    mutable_content: Option<bool>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
     notification: Option<Notification<'a>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -87,6 +90,7 @@ pub struct MessageBuilder<'a> {
     data: Option<Value>,
     delay_while_idle: Option<bool>,
     dry_run: Option<bool>,
+    mutable_content: Option<bool>,
     notification: Option<Notification<'a>>,
     priority: Option<Priority>,
     registration_ids: Option<Vec<Cow<'a, str>>>,
@@ -105,6 +109,7 @@ impl<'a> MessageBuilder<'a> {
             collapse_key: None,
             priority: None,
             content_available: None,
+            mutable_content: None,
             delay_while_idle: None,
             time_to_live: None,
             restricted_package_name: None,
@@ -128,6 +133,7 @@ impl<'a> MessageBuilder<'a> {
             collapse_key: None,
             priority: None,
             content_available: None,
+            mutable_content: None,
             delay_while_idle: None,
             time_to_live: None,
             restricted_package_name: None,
@@ -171,6 +177,12 @@ impl<'a> MessageBuilder<'a> {
     /// To set the `content-available` field on iOS
     pub fn content_available(&mut self, content_available: bool) -> &mut Self {
         self.content_available = Some(content_available);
+        self
+    }
+
+    /// To set the `mutable-content` field on iOS
+    pub fn mutable_content(&mut self, mutable_content: bool) -> &mut Self {
+        self.mutable_content = Some(mutable_content);
         self
     }
 
@@ -249,6 +261,7 @@ impl<'a> MessageBuilder<'a> {
                 collapse_key: self.collapse_key,
                 priority: self.priority,
                 content_available: self.content_available,
+                mutable_content: self.mutable_content,
                 delay_while_idle: self.delay_while_idle,
                 time_to_live: self.time_to_live,
                 restricted_package_name: self.restricted_package_name,
