@@ -11,26 +11,19 @@ pub struct Client {
     http_client: reqwest::Client,
 }
 
-impl Default for Client {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
 impl Client {
     /// Get a new instance of Client.
-    pub fn new() -> Client {
+    pub fn new() -> Result<Client, FcmError> {
         let http_client = reqwest::ClientBuilder::new()
             .pool_max_idle_per_host(std::usize::MAX)
-            .build()
-            .unwrap();
+            .build()?;
 
-        Client { http_client }
+        Ok(Client { http_client })
     }
 
     /// Try sending a `Message` to FCM.
     pub async fn send(&self, message: Message<'_>) -> Result<FcmResponse, FcmError> {
-        let payload = serde_json::to_vec(&message.body).unwrap();
+        let payload = serde_json::to_vec(&message.body)?;
 
         let request = self
             .http_client
@@ -52,7 +45,7 @@ impl Client {
 
         match response_status {
             StatusCode::OK => {
-                let fcm_response: FcmResponse = response.json().await.unwrap();
+                let fcm_response: FcmResponse = response.json().await?;
 
                 match fcm_response.error {
                     Some(ErrorReason::Unavailable) => Err(response::FcmError::ServerError(retry_after)),

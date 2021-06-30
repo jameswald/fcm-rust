@@ -164,6 +164,12 @@ impl From<reqwest::Error> for FcmError {
     }
 }
 
+impl From<serde_json::Error> for FcmError {
+    fn from(error: serde_json::Error) -> Self {
+        Self::InvalidMessage(error.to_string())
+    }
+}
+
 #[derive(PartialEq, Debug)]
 pub enum RetryAfter {
     /// Amount of time to wait until retrying the message is allowed.
