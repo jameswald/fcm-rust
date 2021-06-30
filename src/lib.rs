@@ -10,6 +10,7 @@
 //!
 //! ```no_run
 //! # use std::collections::HashMap;
+//! # use std::time::Duration;
 //! # #[tokio::main]
 //! # async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
 //! let client = fcm::Client::new()?;
@@ -20,7 +21,8 @@
 //! let mut builder = fcm::MessageBuilder::new("<FCM API Key>", "<registration id>");
 //! builder.data(&map);
 //!
-//! let response = client.send(builder.finalize()).await?;
+//! let timeout = Duration::from_secs(5);
+//! let response = client.send(builder.finalize(), timeout).await?;
 //! println!("Sent: {:?}", response);
 //! # Ok(())
 //! # }
@@ -40,6 +42,7 @@
 //! And then set it in the message, before sending it:
 //!
 //! ```no_run
+//! # use std::time::Duration;
 //! # #[tokio::main]
 //! # async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
 //! let client = fcm::Client::new()?;
@@ -52,7 +55,8 @@
 //! let mut message_builder = fcm::MessageBuilder::new("<FCM API Key>", "<registration id>");
 //! message_builder.notification(notification);
 //!
-//! let response = client.send(message_builder.finalize()).await?;
+//! let timeout = Duration::from_secs(5);
+//! let response = client.send(message_builder.finalize(), timeout).await?;
 //! println!("Sent: {:?}", response);
 //! # Ok(())
 //! # }

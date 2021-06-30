@@ -5,6 +5,7 @@ pub use crate::client::response::*;
 use crate::message::Message;
 use reqwest::header::{AUTHORIZATION, CONTENT_LENGTH, CONTENT_TYPE, RETRY_AFTER};
 use reqwest::{Body, StatusCode};
+use std::time::Duration;
 
 /// An async client for sending the notification payload.
 pub struct Client {
@@ -22,7 +23,7 @@ impl Client {
     }
 
     /// Try sending a `Message` to FCM.
-    pub async fn send(&self, message: Message<'_>) -> Result<FcmResponse, FcmError> {
+    pub async fn send(&self, message: Message<'_>, timeout: Duration) -> Result<FcmResponse, FcmError> {
         let payload = serde_json::to_vec(&message.body)?;
 
         let request = self
@@ -32,6 +33,7 @@ impl Client {
             .header(CONTENT_LENGTH, format!("{}", payload.len() as u64).as_bytes())
             .header(AUTHORIZATION, format!("key={}", message.api_key).as_bytes())
             .body(Body::from(payload))
+            .timeout(timeout)
             .build()?;
         let response = self.http_client.execute(request).await?;
 

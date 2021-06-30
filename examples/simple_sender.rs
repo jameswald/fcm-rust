@@ -1,6 +1,7 @@
 use argparse::{ArgumentParser, Store};
 use fcm::{Client, MessageBuilder};
 use serde::Serialize;
+use std::time::Duration;
 
 #[derive(Serialize)]
 struct CustomData {
@@ -30,7 +31,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     let mut builder = MessageBuilder::new(&api_key, &device_token);
     builder.data(&data)?;
 
-    let response = client.send(builder.finalize()).await?;
+    let timeout = Duration::from_secs(5);
+    let response = client.send(builder.finalize(), timeout).await?;
     println!("Sent: {:?}", response);
 
     Ok(())
